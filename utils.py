@@ -2,6 +2,7 @@ import os, random
 import numpy as np
 import torch
 import torch.nn as nn
+import torchaudio
 
 
 def set_random_seed(seed) -> None:
@@ -38,3 +39,26 @@ def find_sorted_position(arr):
     for i, v in enumerate(sorted_idx):
         ret[v] = i
     return ret
+
+
+def convert_to_mel(x, sr=16000, nfft=400, win_length=400, hop_length=320, n_mels=64, power=2, normalized=False):
+    transformer = torchaudio.transforms.MelSpectrogram(sample_rate=sr, 
+                                                       n_fft=nfft, 
+                                                       win_length=win_length, 
+                                                       hop_length=hop_length, 
+                                                       n_mels=n_mels, 
+                                                       normalized=normalized)
+    x = torch.tensor(x).unsqueeze(0)
+    melspec = transformer(x)
+    
+    return melspec
+
+def convert_to_spectrogram(x, sr=16000, nfft=400, win_length=400, hop_length=320):
+    transformer = torchaudio.transforms.MelSpectrogram(sample_rate=sr, 
+                                                       n_fft=nfft, 
+                                                       win_length=win_length, 
+                                                       hop_length=hop_length)
+    x = torch.tensor(x).unsqueeze(0)
+    melspec = transformer(x)
+    
+    return melspec
